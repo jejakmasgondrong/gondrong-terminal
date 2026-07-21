@@ -119,3 +119,25 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Custom scrollbar for number inputs */
+input[type="number"]:focus {
+  outline: none;
+}
+
+/* Remove default arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
