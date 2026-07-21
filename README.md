@@ -107,3 +107,4 @@ This application is a portfolio project created for educational and demonstratio
 
 🙏 Credits
 Built with 🐍 by Gondrong
+# gondrong-terminal
