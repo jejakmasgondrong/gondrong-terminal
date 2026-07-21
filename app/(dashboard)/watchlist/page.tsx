@@ -29,10 +29,17 @@ export default function WatchlistPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Client-only mount
+  useEffect(() => {
+    setIsMounted(true);
+    setIsLoading(false);
+  }, []);
 
   // Simulate real-time price updates
   useEffect(() => {
-    setIsLoading(false);
+    if (!isMounted) return;
     
     const interval = setInterval(() => {
       items.forEach((item) => {
@@ -47,7 +54,7 @@ export default function WatchlistPage() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [items, updatePrice]);
+  }, [items, updatePrice, isMounted]);
 
   const filteredSymbols = popularSymbols.filter(
     (s) =>
@@ -67,6 +74,29 @@ export default function WatchlistPage() {
     if (price < 100) return price.toFixed(2);
     return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
+
+  // Calculate stats - only on client
+  const totalChange = items.reduce((acc, i) => acc + i.change24h, 0);
+  const avgChange = items.length > 0 ? (totalChange / items.length) * 100 : 0;
+  const avgPrice = items.length > 0 ? items.reduce((acc, i) => acc + i.price, 0) / items.length : 0;
+
+  // Don't render on server
+  if (!isMounted) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold gradient-text tracking-tight">Watchlist</h1>
+          <p className="text-white/30 text-sm mt-0.5">Real-time price tracking</p>
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-white/30 text-sm mt-3">Loading watchlist...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -190,14 +220,14 @@ export default function WatchlistPage() {
         </div>
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">24h Change</p>
-          <p className={`text-lg font-bold ${items.reduce((acc, i) => acc + i.change24h, 0) >= 0 ? 'text-[#00ff88]' : 'text-[#ff6b6b]'}`}>
-            {(items.reduce((acc, i) => acc + i.change24h, 0) / (items.length || 1) * 100).toFixed(2)}%
+          <p className={`text-lg font-bold ${avgChange >= 0 ? 'text-[#00ff88]' : 'text-[#ff6b6b]'}`}>
+            {avgChange.toFixed(2)}%
           </p>
         </div>
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">Avg Price</p>
           <p className="text-lg font-bold text-white">
-            ${(items.reduce((acc, i) => acc + i.price, 0) / (items.length || 1)).toFixed(2)}
+            ${avgPrice.toFixed(2)}
           </p>
         </div>
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
