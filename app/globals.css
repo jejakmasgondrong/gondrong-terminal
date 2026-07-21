@@ -1,22 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-background: #05050a;
+  --color-foreground: #e0e0e0;
+  --color-border: rgba(255, 255, 255, 0.05);
+}
 
 @layer base {
-  :root {
-    --background: 0 0% 3%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 98%;
-    --border: 0 0% 10%;
-  }
-
   * {
-    @apply border-border;
+    border-color: var(--color-border);
   }
 
   body {
-    @apply bg-[#05050a] text-white antialiased;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: 'Inter', sans-serif;
     background-image: 
       radial-gradient(ellipse at 0% 0%, rgba(88, 0, 255, 0.08) 0%, transparent 60%),
       radial-gradient(ellipse at 100% 100%, rgba(0, 255, 136, 0.05) 0%, transparent 60%);
@@ -26,7 +24,10 @@
 @layer utilities {
   /* Gradient Text */
   .gradient-text {
-    @apply bg-gradient-to-r from-[#00ff88] via-[#a855f7] to-[#7c3aed] bg-clip-text text-transparent;
+    background: linear-gradient(to right, #00ff88, #a855f7, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   /* Glow Effects */
@@ -40,11 +41,19 @@
 
   /* Glassmorphism */
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .glass-hover {
-    @apply hover:bg-white/10 transition-all duration-300 hover:border-[#a855f7]/30;
+    transition: all 0.3s ease;
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(168, 85, 247, 0.3);
   }
 
   /* Animated Gradient Border */
@@ -77,15 +86,16 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background: transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-[#a855f7]/40 rounded-full;
+    background: rgba(168, 85, 247, 0.4);
+    border-radius: 9999px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-[#a855f7]/60;
+    background: rgba(168, 85, 247, 0.6);
   }
 }
 
@@ -108,4 +118,145 @@
   background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
+}
+
+/* 3D Text Effects */
+.text-3d {
+  position: relative;
+  display: inline-block;
+  color: #00ff88;
+  text-shadow: 
+    0 1px 0 #00cc6a,
+    0 2px 0 #00b85e,
+    0 3px 0 #00a452,
+    0 4px 0 #009046,
+    0 5px 0 #007c3a,
+    0 6px 0 #00682e,
+    0 7px 0 #005422,
+    0 8px 0 #004016,
+    0 9px 0 #002c0a,
+    0 10px 20px rgba(0, 0, 0, 0.8),
+    0 10px 40px rgba(0, 255, 136, 0.2);
+}
+
+.text-3d-glow {
+  position: relative;
+  display: inline-block;
+  color: #a855f7;
+  text-shadow: 
+    0 1px 0 #9333ea,
+    0 2px 0 #7c3aed,
+    0 3px 0 #6d28d9,
+    0 4px 0 #5b21b6,
+    0 5px 0 #4c1d95,
+    0 6px 0 #3b0764,
+    0 7px 20px rgba(0, 0, 0, 0.8),
+    0 7px 40px rgba(168, 85, 247, 0.3),
+    0 0 80px rgba(168, 85, 247, 0.1);
+}
+
+.text-3d-gradient {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(135deg, #00ff88 0%, #a855f7 40%, #7c3aed 70%, #00ff88 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift-3d 4s ease-in-out infinite;
+  text-shadow: 
+    0 1px 0 rgba(0, 255, 136, 0.3),
+    0 2px 0 rgba(168, 85, 247, 0.3),
+    0 4px 0 rgba(0, 255, 136, 0.2),
+    0 6px 0 rgba(124, 58, 237, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.8),
+    0 8px 40px rgba(168, 85, 247, 0.2);
+}
+
+@keyframes gradient-shift-3d {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating Glow Effect */
+.text-float-glow {
+  animation: float-glow 3s ease-in-out infinite;
+}
+
+@keyframes float-glow {
+  0%, 100% { 
+    transform: translateY(0px);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+  }
+  50% { 
+    transform: translateY(-5px);
+    filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.6));
+  }
+}
+
+/* Premium Gradient Background for Text */
+.text-premium {
+  background: linear-gradient(180deg, #ffffff 0%, #a855f7 50%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 
+    0 0 40px rgba(168, 85, 247, 0.3),
+    0 0 80px rgba(0, 255, 136, 0.1);
+}
+
+/* Neon Border Glow */
+.neon-border {
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.neon-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, #00ff88, #a855f7, #7c3aed, #00ff88);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glass with 3D Depth */
+.glass-3d {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 40px rgba(168, 85, 247, 0.05);
+}
+
+.glass-3d-hover {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-3d-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(168, 85, 247, 0.2);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 60px rgba(168, 85, 247, 0.08);
+}
+
+/* Text Stroke */
+.text-stroke {
+  -webkit-text-stroke: 2px rgba(168, 85, 247, 0.3);
+  text-stroke: 2px rgba(168, 85, 247, 0.3);
+  color: transparent;
 }
