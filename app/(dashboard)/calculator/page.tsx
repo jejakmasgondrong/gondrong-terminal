@@ -3,13 +3,10 @@
 import { useState, useEffect } from 'react';
 import { 
   Calculator,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Percent,
   AlertCircle,
-  RefreshCw,
+  Percent,
   ChevronDown,
+  X,
 } from 'lucide-react';
 
 interface PositionResult {
@@ -30,16 +27,12 @@ export default function CalculatorPage() {
   const [capital, setCapital] = useState<number>(10000);
   const [riskPercent, setRiskPercent] = useState<number>(2);
   const [leverage, setLeverage] = useState<number>(1);
-  const [selectedPair, setSelectedPair] = useState('SOLUSDT');
+  const [selectedPair, setSelectedPair] = useState('SOL/USDT');
   const [result, setResult] = useState<PositionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const pairs = [
-    { label: 'SOL/USDT', value: 'SOLUSDT' },
-    { label: 'BTC/USDT', value: 'BTCUSDT' },
-    { label: 'ETH/USDT', value: 'ETHUSDT' },
-    { label: 'BONK/USDT', value: 'BONKUSDT' },
-    { label: 'XAU/USD', value: 'XAUUSD' },
+  const quickPairs = [
+    'SOL/USDT', 'BTC/USDT', 'ETH/USDT', 'BONK/USDT', 'XAU/USD'
   ];
 
   const calculatePosition = () => {
@@ -73,9 +66,6 @@ export default function CalculatorPage() {
     const riskAmount = capital * (riskPercent / 100);
     const priceDiff = entryPrice - stopLoss;
     const positionSize = riskAmount / priceDiff;
-    const leveragedPositionSize = positionSize * leverage;
-    const requiredMargin = positionSize * entryPrice;
-    const leveragedRequiredMargin = requiredMargin / leverage;
     const rewardDiff = takeProfit - entryPrice;
     const rewardAmount = positionSize * rewardDiff;
     const riskRewardRatio = rewardAmount / riskAmount;
@@ -122,26 +112,36 @@ export default function CalculatorPage() {
           <h2 className="text-base font-semibold text-white mb-4">Position Parameters</h2>
 
           <div className="space-y-4">
-            {/* Pair Select - Custom styled */}
+            {/* Pair - Input + Quick Select */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Pair</label>
-              <div className="relative">
-                <select 
-                  value={selectedPair}
-                  onChange={(e) => setSelectedPair(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 appearance-none cursor-pointer hover:bg-white/10 transition-all"
-                >
-                  {pairs.map((pair) => (
-                    <option key={pair.value} value={pair.value} className="bg-[#0a0a12] text-white py-2">
-                      {pair.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+              <input
+                type="text"
+                value={selectedPair}
+                onChange={(e) => setSelectedPair(e.target.value.toUpperCase())}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20 font-mono"
+                placeholder="e.g. SOL/USDT, XAU/USD"
+              />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {quickPairs.map((pair) => (
+                  <button
+                    key={pair}
+                    onClick={() => setSelectedPair(pair)}
+                    className={`
+                      px-2.5 py-1 rounded-lg text-[10px] font-mono transition-all
+                      ${selectedPair === pair 
+                        ? 'bg-[#a855f7]/20 text-[#a855f7] border border-[#a855f7]/30' 
+                        : 'bg-white/5 text-white/40 hover:text-white/70 hover:bg-white/10 border border-transparent'
+                      }
+                    `}
+                  >
+                    {pair}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Input fields dengan styling custom */}
+            {/* Entry Price */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Entry Price ($)</label>
               <input
@@ -151,10 +151,11 @@ export default function CalculatorPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
-                placeholder="Enter entry price..."
+                placeholder="0.00"
               />
             </div>
 
+            {/* Stop Loss */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Stop Loss ($)</label>
               <input
@@ -164,10 +165,11 @@ export default function CalculatorPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
-                placeholder="Enter stop loss..."
+                placeholder="0.00"
               />
             </div>
 
+            {/* Take Profit */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Take Profit ($)</label>
               <input
@@ -177,10 +179,11 @@ export default function CalculatorPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
-                placeholder="Enter take profit..."
+                placeholder="0.00"
               />
             </div>
 
+            {/* Capital */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Capital ($)</label>
               <input
@@ -190,10 +193,11 @@ export default function CalculatorPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="100"
                 min="0"
-                placeholder="Enter capital..."
+                placeholder="0"
               />
             </div>
 
+            {/* Risk % */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Risk per Trade (%)</label>
               <div className="relative">
@@ -205,12 +209,13 @@ export default function CalculatorPage() {
                   step="0.5"
                   min="0.5"
                   max="10"
-                  placeholder="Enter risk %..."
+                  placeholder="1.0"
                 />
                 <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
               </div>
             </div>
 
+            {/* Leverage */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Leverage (1x - 100x)</label>
               <input
@@ -221,7 +226,7 @@ export default function CalculatorPage() {
                 step="1"
                 min="1"
                 max="100"
-                placeholder="Enter leverage..."
+                placeholder="1"
               />
             </div>
 
@@ -326,10 +331,8 @@ export default function CalculatorPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
-          <p className="text-[10px] text-white/30 font-mono">Current Pair</p>
-          <p className="text-sm font-semibold text-white">
-            {pairs.find(p => p.value === selectedPair)?.label || selectedPair}
-          </p>
+          <p className="text-[10px] text-white/30 font-mono">Pair</p>
+          <p className="text-sm font-semibold text-white">{selectedPair}</p>
         </div>
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">Risk per Trade</p>
