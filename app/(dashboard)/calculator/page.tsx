@@ -9,6 +9,7 @@ import {
   Percent,
   AlertCircle,
   RefreshCw,
+  ChevronDown,
 } from 'lucide-react';
 
 interface PositionResult {
@@ -29,6 +30,7 @@ export default function CalculatorPage() {
   const [capital, setCapital] = useState<number>(10000);
   const [riskPercent, setRiskPercent] = useState<number>(2);
   const [leverage, setLeverage] = useState<number>(1);
+  const [selectedPair, setSelectedPair] = useState('SOLUSDT');
   const [result, setResult] = useState<PositionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +45,6 @@ export default function CalculatorPage() {
   const calculatePosition = () => {
     setError(null);
 
-    // Validasi
     if (entryPrice <= 0 || stopLoss <= 0 || takeProfit <= 0 || capital <= 0) {
       setError('All values must be greater than 0');
       return;
@@ -69,25 +70,18 @@ export default function CalculatorPage() {
       return;
     }
 
-    // Calculate
     const riskAmount = capital * (riskPercent / 100);
     const priceDiff = entryPrice - stopLoss;
     const positionSize = riskAmount / priceDiff;
-    
-    // Adjust for leverage
     const leveragedPositionSize = positionSize * leverage;
     const requiredMargin = positionSize * entryPrice;
     const leveragedRequiredMargin = requiredMargin / leverage;
-    
-    // Reward
     const rewardDiff = takeProfit - entryPrice;
     const rewardAmount = positionSize * rewardDiff;
     const riskRewardRatio = rewardAmount / riskAmount;
-    
-    // PnL
     const potentialProfit = positionSize * rewardDiff * leverage;
     const potentialLoss = positionSize * priceDiff * leverage;
-    const breakEvenPrice = entryPrice + (priceDiff / 2); // Simplified break-even
+    const breakEvenPrice = entryPrice + (priceDiff / 2);
 
     setResult({
       positionSize,
@@ -112,10 +106,6 @@ export default function CalculatorPage() {
     return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const formatPercent = (value: number) => {
-    return (value * 100).toFixed(2);
-  };
-
   const isProfitPositive = result?.potentialProfit ? result.potentialProfit > 0 : false;
 
   return (
@@ -132,98 +122,106 @@ export default function CalculatorPage() {
           <h2 className="text-base font-semibold text-white mb-4">Position Parameters</h2>
 
           <div className="space-y-4">
-            {/* Pair Select */}
+            {/* Pair Select - Custom styled */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Pair</label>
-              <select 
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
-                defaultValue="SOLUSDT"
-              >
-                {pairs.map((pair) => (
-                  <option key={pair.value} value={pair.value} className="bg-[#0a0a12]">
-                    {pair.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select 
+                  value={selectedPair}
+                  onChange={(e) => setSelectedPair(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 appearance-none cursor-pointer hover:bg-white/10 transition-all"
+                >
+                  {pairs.map((pair) => (
+                    <option key={pair.value} value={pair.value} className="bg-[#0a0a12] text-white py-2">
+                      {pair.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+              </div>
             </div>
 
-            {/* Entry Price */}
+            {/* Input fields dengan styling custom */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Entry Price ($)</label>
               <input
                 type="number"
                 value={entryPrice}
                 onChange={(e) => setEntryPrice(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
+                placeholder="Enter entry price..."
               />
             </div>
 
-            {/* Stop Loss */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Stop Loss ($)</label>
               <input
                 type="number"
                 value={stopLoss}
                 onChange={(e) => setStopLoss(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
+                placeholder="Enter stop loss..."
               />
             </div>
 
-            {/* Take Profit */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Take Profit ($)</label>
               <input
                 type="number"
                 value={takeProfit}
                 onChange={(e) => setTakeProfit(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="0.01"
                 min="0"
+                placeholder="Enter take profit..."
               />
             </div>
 
-            {/* Capital */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Capital ($)</label>
               <input
                 type="number"
                 value={capital}
                 onChange={(e) => setCapital(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="100"
                 min="0"
+                placeholder="Enter capital..."
               />
             </div>
 
-            {/* Risk % */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Risk per Trade (%)</label>
-              <input
-                type="number"
-                value={riskPercent}
-                onChange={(e) => setRiskPercent(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
-                step="0.5"
-                min="0.5"
-                max="10"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  value={riskPercent}
+                  onChange={(e) => setRiskPercent(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
+                  step="0.5"
+                  min="0.5"
+                  max="10"
+                  placeholder="Enter risk %..."
+                />
+                <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+              </div>
             </div>
 
-            {/* Leverage */}
             <div>
               <label className="text-xs text-white/40 font-mono block mb-1.5">Leverage (1x - 100x)</label>
               <input
                 type="number"
                 value={leverage}
                 onChange={(e) => setLeverage(parseFloat(e.target.value) || 1)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-[#a855f7]/30 focus:bg-white/10 transition-all placeholder:text-white/20"
                 step="1"
                 min="1"
                 max="100"
+                placeholder="Enter leverage..."
               />
             </div>
 
@@ -236,7 +234,7 @@ export default function CalculatorPage() {
 
             <button
               onClick={calculatePosition}
-              className="w-full px-4 py-3 bg-gradient-to-r from-[#00ff88] to-[#a855f7] rounded-lg text-white font-medium hover:opacity-90 transition-all"
+              className="w-full px-4 py-3 bg-gradient-to-r from-[#00ff88] to-[#a855f7] rounded-lg text-white font-medium hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Calculate Position
             </button>
@@ -252,14 +250,12 @@ export default function CalculatorPage() {
 
           {result ? (
             <div className="space-y-4">
-              {/* Position Size */}
               <div className="bg-white/5 rounded-lg p-4 border border-white/5">
                 <p className="text-[10px] text-white/30 font-mono">Position Size</p>
                 <p className="text-xl font-bold text-white">{formatCurrency(result.positionSize)} units</p>
                 <p className="text-xs text-white/20 font-mono mt-0.5">Leveraged: {result.leverage}x</p>
               </div>
 
-              {/* Risk & Reward */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-red-500/5 rounded-lg p-4 border border-red-500/10">
                   <p className="text-[10px] text-red-400/60 font-mono">Risk Amount</p>
@@ -275,7 +271,6 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              {/* Risk/Reward Ratio */}
               <div className="bg-[#a855f7]/5 rounded-lg p-4 border border-[#a855f7]/10">
                 <p className="text-[10px] text-[#a855f7]/60 font-mono">Risk/Reward Ratio</p>
                 <p className="text-lg font-bold text-[#a855f7]">
@@ -283,7 +278,6 @@ export default function CalculatorPage() {
                 </p>
               </div>
 
-              {/* PnL Projection */}
               <div className="grid grid-cols-2 gap-3">
                 <div className={`${isProfitPositive ? 'bg-green-500/5' : 'bg-red-500/5'} rounded-lg p-4 border ${isProfitPositive ? 'border-green-500/10' : 'border-red-500/10'}`}>
                   <p className="text-[10px] text-white/30 font-mono">Potential Profit</p>
@@ -299,7 +293,6 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              {/* Break-even */}
               <div className="bg-white/5 rounded-lg p-4 border border-white/5">
                 <p className="text-[10px] text-white/30 font-mono">Break-even Price</p>
                 <p className="text-sm font-semibold text-white">
@@ -307,7 +300,6 @@ export default function CalculatorPage() {
                 </p>
               </div>
 
-              {/* Leverage Warning */}
               {result.leverage > 1 && (
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
@@ -331,11 +323,13 @@ export default function CalculatorPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">Current Pair</p>
-          <p className="text-sm font-semibold text-white">SOL/USDT</p>
+          <p className="text-sm font-semibold text-white">
+            {pairs.find(p => p.value === selectedPair)?.label || selectedPair}
+          </p>
         </div>
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">Risk per Trade</p>
