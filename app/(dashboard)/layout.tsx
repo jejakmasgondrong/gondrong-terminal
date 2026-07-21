@@ -3,7 +3,6 @@
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   LineChart,
@@ -22,18 +21,17 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
-  gradient?: string;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: 'Chart', href: '/chart', icon: <LineChart className="w-5 h-5" /> },
-  { label: 'Watchlist', href: '/watchlist', icon: <List className="w-5 h-5" /> },
-  { label: 'News', href: '/news', icon: <Newspaper className="w-5 h-5" /> },
-  { label: 'Calendar', href: '/calendar', icon: <Calendar className="w-5 h-5" /> },
-  { label: 'AI Analysis', href: '/ai-analysis', icon: <Bot className="w-5 h-5" /> },
-  { label: 'Calculator', href: '/calculator', icon: <Calculator className="w-5 h-5" /> },
-  { label: 'Wallet', href: '/wallet', icon: <Wallet className="w-5 h-5" /> },
+  { label: 'Dashboard', href: '/', icon: <LayoutDashboard className="w-4 h-4" /> },
+  { label: 'Chart', href: '/chart', icon: <LineChart className="w-4 h-4" /> },
+  { label: 'Watchlist', href: '/watchlist', icon: <List className="w-4 h-4" /> },
+  { label: 'News', href: '/news', icon: <Newspaper className="w-4 h-4" /> },
+  { label: 'Calendar', href: '/calendar', icon: <Calendar className="w-4 h-4" /> },
+  { label: 'AI Analysis', href: '/ai-analysis', icon: <Bot className="w-4 h-4" /> },
+  { label: 'Calculator', href: '/calculator', icon: <Calculator className="w-4 h-4" /> },
+  { label: 'Wallet', href: '/wallet', icon: <Wallet className="w-4 h-4" /> },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -42,120 +40,77 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#05050a]">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-[280px] flex-col bg-[#0a0a12]/80 backdrop-blur-2xl border-r border-white/5">
-        {/* Logo with 3D Effect */}
-        <div className="p-6 border-b border-white/5">
+      {/* Sidebar */}
+      <aside className="hidden lg:flex w-[240px] flex-col bg-[#0a0a12] border-r border-white/5">
+        {/* Logo */}
+        <div className="px-6 py-5 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <motion.div 
-              whileHover={{ rotate: 360, scale: 1.1 }}
-              transition={{ duration: 0.6, type: "spring" }}
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00ff88] to-[#a855f7] flex items-center justify-center shadow-lg shadow-[#a855f7]/20"
-            >
-              <Zap className="w-6 h-6 text-white" />
-            </motion.div>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00ff88] to-[#a855f7] flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
+            </div>
             <div>
-              <motion.h1 
-                className="text-2xl font-bold text-3d-gradient text-float-glow"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              >
-                GONDRONG
-              </motion.h1>
-              <p className="text-[10px] text-white/20 font-mono tracking-[0.3em] text-premium">
-                TERMINAL
-              </p>
+              <h1 className="text-lg font-bold gradient-text tracking-tight">GONDRONG</h1>
+              <p className="text-[9px] text-white/20 font-mono tracking-[0.2em]">TERMINAL</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto custom-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link key={item.href} href={item.href}>
-                <motion.div
-                  whileHover={{ x: 6, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <div
                   className={`
-                    relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
+                    flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
                     ${isActive 
-                      ? 'glass-3d glass-3d-hover border border-[#a855f7]/20' 
-                      : 'hover:glass-3d border border-transparent'
+                      ? 'bg-white/5 text-white border border-white/5' 
+                      : 'text-white/40 hover:text-white/70 hover:bg-white/5'
                     }
                   `}
                 >
-                  {isActive && (
-                    <motion.div 
-                      layoutId="activeIndicator"
-                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#a855f7]/10 to-[#00ff88]/5"
-                    />
-                  )}
-                  <div className={`
-                    ${isActive ? 'text-[#a855f7]' : 'text-white/40 group-hover:text-white/60'}
-                    transition-colors duration-300 relative z-10
-                  `}>
+                  <div className={isActive ? 'text-[#a855f7]' : 'text-inherit'}>
                     {item.icon}
                   </div>
-                  <span className={`
-                    text-sm font-medium relative z-10
-                    ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white/80'}
-                    transition-colors duration-300
-                  `}>
-                    {item.label}
-                  </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeDot"
-                      className="absolute right-3 w-1.5 h-1.5 rounded-full bg-[#a855f7] shadow-lg shadow-[#a855f7]/50"
-                    />
-                  )}
-                </motion.div>
+                  <span className="text-sm font-medium">{item.label}</span>
+                </div>
               </Link>
             );
           })}
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/5">
-          <div className="glass-3d rounded-xl p-4 text-center">
-            <p className="text-[10px] text-white/20 font-mono">⚡ v0.1.0 · Portfolio Project</p>
-            <p className="text-[8px] text-white/10 mt-1 font-mono">Built with 🐍 by Gondrong</p>
-          </div>
+        <div className="px-6 py-4 border-t border-white/5">
+          <p className="text-[9px] text-white/10 font-mono text-center">v0.1.0 · Portfolio</p>
         </div>
       </aside>
 
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl glass-3d"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[#0a0a12] border border-white/10"
       >
         {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Mobile Sidebar */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-xl">
-          <aside className="w-[280px] h-full bg-[#0a0a12] border-r border-white/5 p-4">
-            <div className="p-4">
-              <h1 className="text-2xl font-bold text-3d-gradient">GONDRONG</h1>
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-sm">
+          <aside className="w-[240px] h-full bg-[#0a0a12] border-r border-white/5 p-4">
+            <div className="p-2">
+              <h1 className="text-xl font-bold gradient-text">GONDRONG</h1>
             </div>
-            <nav className="mt-4 space-y-1">
+            <nav className="mt-4 space-y-0.5">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
                     <div className={`
-                      flex items-center gap-3 px-4 py-3 rounded-xl transition-all
-                      ${isActive ? 'glass-3d border border-[#a855f7]/20' : 'hover:glass-3d'}
+                      flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
+                      ${isActive ? 'bg-white/5 text-white' : 'text-white/40 hover:text-white/70 hover:bg-white/5'}
                     `}>
-                      <div className={isActive ? 'text-[#a855f7]' : 'text-white/40'}>
-                        {item.icon}
-                      </div>
-                      <span className={`text-sm ${isActive ? 'text-white' : 'text-white/60'}`}>
-                        {item.label}
-                      </span>
+                      <div className={isActive ? 'text-[#a855f7]' : ''}>{item.icon}</div>
+                      <span className="text-sm">{item.label}</span>
                     </div>
                   </Link>
                 );
@@ -166,7 +121,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto custom-scrollbar bg-[#05050a]">
+      <main className="flex-1 overflow-auto custom-scrollbar">
         <div className="p-6 lg:p-8">{children}</div>
       </main>
     </div>
