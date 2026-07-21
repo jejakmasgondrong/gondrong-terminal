@@ -18,42 +18,33 @@ export function TradingViewChart({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    setIsLoading(true);
-    setError(null);
+    setIsMounted(true);
+  }, []);
 
-    // Clean up previous widget
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-    }
+  useEffect(() => {
+    if (!isMounted || !containerRef.current) return;
 
-    // Create container
-    const widgetContainer = document.createElement('div');
-    widgetContainer.className = 'tradingview-widget-container';
-    widgetContainer.style.height = '100%';
-    widgetContainer.style.width = '100%';
-    widgetContainer.id = 'tradingview_chart_container';
+    let widgetInitialized = false;
+    const container = containerRef.current;
+    
+    // Bersihin container
+    container.innerHTML = '';
 
-    if (containerRef.current) {
-      containerRef.current.appendChild(widgetContainer);
-    }
+    // Buat container baru dengan ID
+    const widgetDiv = document.createElement('div');
+    widgetDiv.id = `tv_chart_${Date.now()}`;
+    widgetDiv.style.width = '100%';
+    widgetDiv.style.height = '100%';
+    container.appendChild(widgetDiv);
 
-    // Create script
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-    script.type = 'text/javascript';
-    script.async = true;
+    // Format symbol
+    const formattedSymbol = symbol.includes(':') ? symbol : `BINANCE:${symbol}`;
 
-    // Format symbol with exchange
-    let formattedSymbol = symbol;
-    if (!symbol.includes(':')) {
-      formattedSymbol = `BINANCE:${symbol}`;
-    }
-
-    // Config
-    const config = {
+    // Widget config
+    const widgetConfig = {
       autosize: true,
       symbol: formattedSymbol,
       interval: interval,
@@ -61,9 +52,10 @@ export function TradingViewChart({
       theme: theme,
       style: '1',
       locale: 'en',
+      toolbar_bg: '#131722',
       enable_publishing: false,
       allow_symbol_change: true,
-      container_id: 'tradingview_chart_container',
+      container_id: widgetDiv.id,
       hide_top_toolbar: false,
       hide_legend: false,
       save_image: false,
@@ -73,68 +65,73 @@ export function TradingViewChart({
       popup_width: '1000',
       popup_height: '650',
       no_referral_id: true,
-      // Add these to fix iframe issues
       loading_screen: {
         backgroundColor: '#131722',
         foregroundColor: '#00ff88',
       },
     };
 
-    // Set script content with proper JSON
-    script.textContent = JSON.stringify(config);
+    // Load TradingView script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://s3.tradingview.com/tv.js';
+    script.async = true;
 
-    // Handle script load
     script.onload = () => {
-      if (mounted) {
+      try {
+        // @ts-ignore - TradingView global
+        if (window.TradingView) {
+          // @ts-ignore
+          new window.TradingView.widget(widgetConfig);
+          setIsLoading(false);
+          widgetInitialized = true;
+        } else {
+          // Fallback: coba load dengan embed widget
+          const embedScript = document.createElement('script');
+          embedScript.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+          embedScript.type = 'text/javascript';
+          embedScript.async = true;
+          embedScript.textContent = JSON.stringify(widgetConfig);
+          container.appendChild(embedScript);
+          
+          embedScript.onload = () => {
+            setIsLoading(false);
+            widgetInitialized = true;
+          };
+          
+          embedScript.onerror = () => {
+            setError('Failed to load chart widget');
+            setIsLoading(false);
+          };
+        }
+      } catch (err) {
+        setError('Error initializing chart');
         setIsLoading(false);
       }
     };
 
     script.onerror = () => {
-      if (mounted) {
-        setError('Failed to load TradingView chart');
-        setIsLoading(false);
-      }
+      setError('Failed to load TradingView script');
+      setIsLoading(false);
     };
 
-    // Append script
-    if (widgetContainer) {
-      widgetContainer.appendChild(script);
-    }
+    container.appendChild(script);
 
-    // Fallback timeout
-    const timeout = setTimeout(() => {
-      if (mounted && isLoading) {
-        setIsLoading(false);
-      }
-    }, 10000);
-
+    // Cleanup
     return () => {
-      mounted = false;
-      clearTimeout(timeout);
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      if (container) {
+        container.innerHTML = '';
       }
+      widgetInitialized = false;
     };
-  }, [symbol, theme, interval, isLoading]);
+  }, [symbol, theme, interval, isMounted]);
 
-  // Valid symbol list for autocomplete
-  const validSymbols = [
-    'BINANCE:SOLUSDT',
-    'BINANCE:BTCUSDT',
-    'BINANCE:ETHUSDT',
-    'BINANCE:BONKUSDT',
-    'BINANCE:JUPUSDT',
-    'RAYDIUM:XAUUSDC',
-    'BINANCE:DOGEUSDT',
-    'BINANCE:ADAUSDT',
-  ];
-
-  // Extract display name
+  // Display symbol name
   const displaySymbol = symbol.includes(':') ? symbol.split(':')[1] : symbol;
 
   return (
     <div className="relative w-full" style={{ height: `${height}px` }}>
+      {/* Loading State */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-[#131722] rounded-xl z-10">
           <div className="text-center">
@@ -144,15 +141,24 @@ export function TradingViewChart({
           </div>
         </div>
       )}
+
+      {/* Error State */}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-[#131722] rounded-xl z-10">
-          <div className="text-center">
-            <div className="text-4xl mb-2">⚠️</div>
-            <p className="text-red-400 text-sm">{error}</p>
-            <p className="text-white/30 text-xs mt-1 font-mono">{displaySymbol}</p>
+          <div className="text-center max-w-sm">
+            <div className="text-4xl mb-3">⚠️</div>
+            <p className="text-red-400 text-sm font-medium">{error}</p>
+            <p className="text-white/30 text-xs mt-2 font-mono">
+              Symbol: {displaySymbol}
+            </p>
+            <p className="text-white/20 text-xs mt-1 font-mono">
+              Try changing the symbol or refresh
+            </p>
           </div>
         </div>
       )}
+
+      {/* Chart Container */}
       <div 
         ref={containerRef} 
         className="w-full h-full rounded-xl overflow-hidden bg-[#131722]"

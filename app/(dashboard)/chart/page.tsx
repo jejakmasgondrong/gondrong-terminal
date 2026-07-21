@@ -1,8 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TradingViewChart } from '@/components/features/chart/TradingViewChart';
+import dynamic from 'next/dynamic';
 import { Search, ChevronDown, RefreshCw } from 'lucide-react';
+
+// Dynamic import with SSR disabled
+const TradingViewChart = dynamic(
+  () => import('@/components/features/chart/TradingViewChart').then((mod) => mod.TradingViewChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-[600px] bg-[#131722] rounded-xl">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-white/40 text-sm mt-3 font-mono">Loading chart...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 const popularPairs = [
   { label: 'SOL/USDT', value: 'BINANCE:SOLUSDT' },
@@ -30,6 +46,11 @@ export default function ChartPage() {
   const [symbol, setSymbol] = useState('BINANCE:SOLUSDT');
   const [interval, setInterval] = useState('15');
   const [key, setKey] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleRefresh = () => {
     setKey(prev => prev + 1);
@@ -37,6 +58,25 @@ export default function ChartPage() {
 
   const currentPair = popularPairs.find(p => p.value === symbol);
   const displayName = currentPair?.label || symbol.split(':')[1] || symbol;
+
+  if (!isClient) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold gradient-text tracking-tight">Chart</h1>
+            <p className="text-white/30 text-sm mt-0.5">Advanced TradingView integration</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center h-[600px] bg-[#131722] rounded-xl">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-white/40 text-sm mt-3 font-mono">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -103,7 +143,7 @@ export default function ChartPage() {
         />
       </div>
 
-      {/* Quick Info - Dynamic */}
+      {/* Quick Info */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="glass rounded-lg px-4 py-3 border border-white/5">
           <p className="text-[10px] text-white/30 font-mono">Pair</p>
