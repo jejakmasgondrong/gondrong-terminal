@@ -16,18 +16,21 @@ export function TradingViewChart({
   height = 500,
 }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
-    // Clean up previous script
-    if (scriptRef.current) {
-      scriptRef.current.remove();
-      scriptRef.current = null;
-    }
-
-    // Clear container
+    // Clean up previous widget
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
+    }
+
+    // Create container for TradingView
+    const widgetContainer = document.createElement('div');
+    widgetContainer.className = 'tradingview-widget-container';
+    widgetContainer.style.height = '100%';
+    widgetContainer.style.width = '100%';
+    
+    if (containerRef.current) {
+      containerRef.current.appendChild(widgetContainer);
     }
 
     // Create script
@@ -36,7 +39,7 @@ export function TradingViewChart({
     script.type = 'text/javascript';
     script.async = true;
 
-    // Create config with proper escaping for embedded widget
+    // Config
     const config = {
       autosize: true,
       symbol: symbol,
@@ -47,7 +50,7 @@ export function TradingViewChart({
       locale: 'en',
       enable_publishing: false,
       allow_symbol_change: true,
-      container_id: 'tradingview_chart_container',
+      container_id: widgetContainer.id || 'tradingview_chart',
       hide_top_toolbar: false,
       hide_legend: false,
       save_image: false,
@@ -59,29 +62,21 @@ export function TradingViewChart({
       no_referral_id: true,
     };
 
-    // Set the script innerHTML with the widget config
-    script.innerHTML = JSON.stringify(config);
-
-    // Append script to container
-    if (containerRef.current) {
-      // Create a wrapper div for the widget
-      const widgetWrapper = document.createElement('div');
-      widgetWrapper.className = 'tradingview-widget-container';
-      widgetWrapper.id = 'tradingview_chart_container';
-      widgetWrapper.style.height = '100%';
-      widgetWrapper.style.width = '100%';
-      
-      containerRef.current.appendChild(widgetWrapper);
-      widgetWrapper.appendChild(script);
-      scriptRef.current = script;
+    // Set widget ID
+    if (widgetContainer) {
+      widgetContainer.id = 'tradingview_chart';
     }
 
-    // Cleanup on unmount
+    // Set script content
+    script.textContent = JSON.stringify(config);
+
+    // Append script to container
+    if (widgetContainer) {
+      widgetContainer.appendChild(script);
+    }
+
+    // Cleanup
     return () => {
-      if (scriptRef.current) {
-        scriptRef.current.remove();
-        scriptRef.current = null;
-      }
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
       }
