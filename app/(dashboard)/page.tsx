@@ -1,6 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  Activity, 
+  DollarSign, 
+  Bitcoin,
+  Zap,
+  ArrowUpRight,
+  ArrowDownRight,
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const [time, setTime] = useState<string>('');
@@ -15,63 +26,143 @@ export default function DashboardPage() {
         second: '2-digit'
       }));
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 mt-1">Welcome to Gondrong Terminal</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-400">Live</p>
-          <p className="text-xl font-mono text-[#00ff88]">{time || 'Loading...'}</p>
-        </div>
-      </div>
+  const stats = [
+    { 
+      label: 'Market Cap', 
+      value: '$2.45T', 
+      change: '+2.3%', 
+      up: true,
+      icon: <DollarSign className="w-5 h-5" />,
+      color: 'from-[#00ff88] to-[#a855f7]',
+    },
+    { 
+      label: '24h Volume', 
+      value: '$68.2B', 
+      change: '+5.1%', 
+      up: true,
+      icon: <Activity className="w-5 h-5" />,
+      color: 'from-[#a855f7] to-[#6366f1]',
+    },
+    { 
+      label: 'BTC Dominance', 
+      value: '54.3%', 
+      change: '-0.2%', 
+      up: false,
+      icon: <Bitcoin className="w-5 h-5" />,
+      color: 'from-[#6366f1] to-[#3b82f6]',
+    },
+    { 
+      label: 'Active Pairs', 
+      value: '12', 
+      change: '+3', 
+      up: true,
+      icon: <Zap className="w-5 h-5" />,
+      color: 'from-[#3b82f6] to-[#00ff88]',
+    },
+  ];
 
-      {/* Grid Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Market Cap', value: '$2.45T', change: '+2.3%' },
-          { label: '24h Volume', value: '$68.2B', change: '+5.1%' },
-          { label: 'BTC Dominance', value: '54.3%', change: '-0.2%' },
-          { label: 'Active Pairs', value: '12', change: '' },
-        ].map((stat, index) => (
-          <div
+  const features = [
+    { emoji: '📊', label: 'Chart', desc: 'Advanced TradingView integration' },
+    { emoji: '👀', label: 'Watchlist', desc: 'Real-time price tracking' },
+    { emoji: '📰', label: 'News', desc: 'Crypto news aggregator' },
+    { emoji: '📅', label: 'Calendar', desc: 'Economic events tracker' },
+    { emoji: '🤖', label: 'AI Analysis', desc: 'Machine learning predictions' },
+    { emoji: '🧮', label: 'Calculator', desc: 'Position sizing & risk' },
+    { emoji: '🔗', label: 'Wallet', desc: 'Solana wallet connection' },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
+        <div>
+          <h1 className="text-4xl font-bold gradient-text">Dashboard</h1>
+          <p className="text-white/40 text-sm font-mono mt-1">
+            Welcome back, Trader 🐍
+          </p>
+        </div>
+        <div className="glass px-6 py-3 rounded-xl text-right min-w-[140px]">
+          <p className="text-[10px] text-white/30 font-mono tracking-widest">LIVE</p>
+          <p className="text-2xl font-mono font-bold text-[#00ff88] neon-pulse">
+            {time || '--:--:--'}
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => (
+          <motion.div
             key={index}
-            className="bg-[#14141e] border border-[#2a2a3a] rounded-xl p-6 hover:border-[#00ff88]/20 transition-all"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="glass glass-hover rounded-2xl p-6 border border-white/5 group relative overflow-hidden"
           >
-            <p className="text-sm text-gray-400">{stat.label}</p>
-            <p className="text-2xl font-bold text-white mt-2">{stat.value}</p>
-            {stat.change && (
-              <p
-                className={`text-sm mt-1 ${
-                  stat.change.startsWith('+')
-                    ? 'text-[#00ff88]'
-                    : 'text-[#ff6b6b]'
-                }`}
-              >
-                {stat.change}
-              </p>
-            )}
-          </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center">
+                  {stat.icon}
+                </div>
+                <span className={`text-sm font-mono px-2 py-1 rounded-lg flex items-center gap-1 ${
+                  stat.up ? 'text-[#00ff88] bg-[#00ff88]/10' : 'text-[#ff6b6b] bg-[#ff6b6b]/10'
+                }`}>
+                  {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                  {stat.change}
+                </span>
+              </div>
+              <p className="text-white/60 text-xs font-mono">{stat.label}</p>
+              <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* Coming Soon */}
-      <div className="bg-[#14141e] border border-[#2a2a3a] rounded-xl p-12 text-center">
-        <h2 className="text-xl font-semibold text-white">🚀 Features Coming Soon</h2>
-        <p className="text-gray-400 mt-2">
-          Chart • Watchlist • News • Calendar • AI Analysis • Calculator • Wallet
-        </p>
-        <div className="mt-4 flex justify-center gap-2">
-          {['📊', '👀', '📰', '📅', '🤖', '🧮', '🔗'].map((emoji, i) => (
-            <span key={i} className="text-2xl animate-pulse">{emoji}</span>
+      {/* Features Grid */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="glass rounded-2xl p-8 border border-white/5"
+      >
+        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <span className="gradient-text">🚀 Features</span>
+          <span className="text-white/20 text-sm font-mono">(coming soon)</span>
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="glass rounded-xl p-4 text-center border border-white/5 hover:border-[#a855f7]/20 transition-all duration-300"
+            >
+              <div className="text-4xl mb-2">{feature.emoji}</div>
+              <p className="text-sm font-semibold text-white">{feature.label}</p>
+              <p className="text-[10px] text-white/30 font-mono mt-1">{feature.desc}</p>
+            </motion.div>
           ))}
+        </div>
+      </motion.div>
+
+      {/* Status Bar */}
+      <div className="flex items-center justify-between text-[10px] text-white/20 font-mono">
+        <div className="flex items-center gap-4">
+          <span>⚡ System Ready</span>
+          <span>●</span>
+          <span>📡 Connected</span>
+          <span>●</span>
+          <span>🧠 AI Engine: Idle</span>
+        </div>
+        <div>
+          <span>v0.1.0 · Portfolio Project</span>
         </div>
       </div>
     </div>
