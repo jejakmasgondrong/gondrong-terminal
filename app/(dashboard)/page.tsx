@@ -72,7 +72,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          {/* Dashboard dengan gradient text kayak GONDRONG */}
+          {/* Dashboard with gradient text */}
           <h1 className="text-3xl font-bold gradient-text tracking-tight">Dashboard</h1>
           <p className="text-white/30 text-sm mt-0.5">Welcome back, Trader</p>
         </div>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
       {/* Features */}
       <div className="glass rounded-xl p-6 border border-white/5">
         <div className="flex items-center gap-2 mb-5">
-          {/* Features dengan gradient text kayak GONDRONG */}
+          {/* Features with gradient text */}
           <h2 className="text-base font-semibold gradient-text">Features</h2>
           <span className="text-[10px] text-white/20 font-mono">(coming soon)</span>
         </div>

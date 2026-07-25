@@ -28,7 +28,7 @@ const tradingViewPairs = [
   { label: 'JUP/USDT', value: 'BINANCE:JUPUSDT', exchange: 'Binance' },
   { label: 'DOGE/USDT', value: 'BINANCE:DOGEUSDT', exchange: 'Binance' },
   { label: 'ADA/USDT', value: 'BINANCE:ADAUSDT', exchange: 'Binance' },
-  // Gold pairs - pake OANDA atau FX_IDC
+  // Gold pairs - use OANDA or FX_IDC
   { label: 'XAU/USD', value: 'OANDA:XAUUSD', exchange: 'OANDA' },
   { label: 'XAU/USD', value: 'FX_IDC:XAUUSD', exchange: 'FX_IDC' },
   // Solana Gold token - fallback

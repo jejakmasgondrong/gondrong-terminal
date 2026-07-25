@@ -30,10 +30,10 @@ export function TradingViewChart({
     let widgetInitialized = false;
     const container = containerRef.current;
     
-    // Bersihin container
+    // Clean up container
     container.innerHTML = '';
 
-    // Buat container baru dengan ID
+    // Create new container with ID
     const widgetDiv = document.createElement('div');
     widgetDiv.id = `tv_chart_${Date.now()}`;
     widgetDiv.style.width = '100%';
@@ -86,7 +86,7 @@ export function TradingViewChart({
           setIsLoading(false);
           widgetInitialized = true;
         } else {
-          // Fallback: coba load dengan embed widget
+          // Fallback: try loading with embed widget
           const embedScript = document.createElement('script');
           embedScript.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
           embedScript.type = 'text/javascript';
