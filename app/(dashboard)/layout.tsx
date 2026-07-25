@@ -122,7 +122,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto custom-scrollbar">
-        <div className="p-6 lg:p-8">{children}</div>
+        <div className="p-6 pt-16 lg:pt-8 lg:p-8">{children}</div>
       </main>
     </div>
   );
