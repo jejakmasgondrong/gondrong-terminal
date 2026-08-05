@@ -27,7 +27,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body>{children}</body>
+      <body className="flex flex-col min-h-screen">{children}
+        <footer className="mt-auto border-t border-gray-800 py-4 text-center">
+          <a
+            href="https://www.linkedin.com/in/rsatriya-wicaksana-56b026ab/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-500 hover:text-emerald-400 transition-colors"
+          >
+            Built by RSatriya · Contact Me
+          </a>
+        </footer>
+      </body>
     </html>
   );
 }
