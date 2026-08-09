@@ -1,110 +1,47 @@
-# 🖥️ Gondrong-Terminal
+# 🖥️ Gondrong Terminal (Archived)
 
-> Personal Crypto Trading Dashboard built with Next.js, Solana, and AI
+> Personal Crypto Trading Dashboard built with Next.js and Solana.
 
-## ✨ Features
+> **⚠️ ARCHIVED — NO LONGER MAINTAINED**
+>
+> This project has been **retired and replaced by [Open Sekte Terminal](https://github.com/jejakmasgondrong/open-sekte-terminal)**. This repository is kept as an archive for reference only. No further development or deploys will happen here.
 
-- 📊 **TradingView Chart** - Real-time price charts with technical indicators
-  - Support for 8+ timeframes (1m to 1W)
-  - Custom pair management (add any TradingView symbol)
-  - Gold (XAUUSD) support via OANDA/FX_IDC
-  - Dark theme optimized
-  
-- 👀 **Watchlist** - Track your favorite crypto pairs (Coming Soon)
-- 📰 **News Aggregator** - Crypto news from multiple sources (Coming Soon)
-- 📅 **Economic Calendar** - Global economic events (Coming Soon)
-- 🤖 **AI Analysis** - Experimental market pattern recognition (Coming Soon)
-- 🧮 **Position Calculator** - Risk management and position sizing (Coming Soon)
-- 🔗 **Solana Wallet** - Connect and interact with Solana blockchain (Coming Soon)
+## What this was
 
-## 🛠️ Tech Stack
+A personal crypto trading dashboard exploring real-time charts, watchlists, and Solana wallet integration:
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand
-- **Data Fetching**: TanStack Query
-- **Web3**: @solana/web3.js
-- **AI**: TensorFlow.js (Planned)
-- **Charts**: TradingView Widget
-- **Animations**: Framer Motion
+- 📊 **TradingView chart** — real-time price charts with multiple timeframes and custom symbols (including gold/XAUUSD)
+- 👀 Watchlist, news, economic calendar, AI analysis, position calculator, wallet — partially planned/WIP features
 
-## 🚀 Getting Started
+## Tech Stack (original)
 
-### Prerequisites
+- **Next.js 14** (App Router), TypeScript, Tailwind CSS
+- Zustand (state), TanStack Query (data), Framer Motion (animation)
+- TradingView chart widget, @solana/web3.js
+- Lucide React icons, dark theme with purple-green gradient accents
 
-- Node.js v20+
-- npm or yarn
-- Git
-
-### Installation
+## Getting Started (archive only)
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/gondrong-terminal.git
+git clone https://github.com/jejakmasgondrong/gondrong-terminal.git
 cd gondrong-terminal
-
-# Install dependencies
 npm install
-
-# Setup environment variables
 cp .env.example .env.local
-# Edit .env.local with your API keys
-
-# Run development server
 npm run dev
-📁 Project Structure
-text
-gondrong-terminal/
-├── app/
-│   ├── (dashboard)/     # Dashboard routes
-│   │   ├── page.tsx     # Dashboard home
-│   │   ├── chart/       # TradingView chart
-│   │   ├── watchlist/   # Watchlist (WIP)
-│   │   ├── news/        # News (WIP)
-│   │   ├── calendar/    # Economic calendar (WIP)
-│   │   ├── ai-analysis/ # AI Analysis (WIP)
-│   │   ├── calculator/  # Position calculator (WIP)
-│   │   └── wallet/      # Solana wallet (WIP)
-│   ├── api/             # API routes
-│   └── layout.tsx
-├── components/
-│   ├── ui/              # Reusable UI components
-│   ├── features/        # Feature-specific components
-│   │   └── chart/
-│   │       └── TradingViewChart.tsx
-│   └── shared/          # Shared components
-├── lib/
-│   ├── api/             # API clients
-│   ├── hooks/           # Custom hooks
-│   ├── stores/          # Zustand stores
-│   └── utils/           # Helpers
-├── public/
-├── .env.example
-├── README.md
-├── DEBUGGING.md
-└── package.json
-🎨 Design System
-Theme: Dark with purple-green gradient accents
+```
 
-Typography: Inter + Space Grotesk
+Open http://localhost:3000.
 
-Effects: Glassmorphism, subtle shadows, gradient text
+## Docs
 
-Icons: Lucide React
+- `DEBUGGING.md` — issues encountered during development
 
-🔐 Environment Variables
-See .env.example for all required variables.
+## License
 
-🐛 Debugging
-See DEBUGGING.md for common issues and solutions.
+MIT — educational / portfolio project only.
 
-📝 License
-MIT - Educational/Portfolio Project Only
+> ⚠️ Disclaimer: This application was created for educational and demonstration purposes only. It is not financial advice and does not perform real trading or financial transactions.
 
-⚠️ Disclaimer
-This application is a portfolio project created for educational and demonstration purposes only. All data is for informational use and should not be considered financial advice. No real trading or financial transactions occur on this platform.
+## Author
 
-🙏 Credits
-Built with 🐍 by Gondrong
-# gondrong-terminal
+Gondrong — [jejakmasgondrong](https://github.com/jejakmasgondrong)
